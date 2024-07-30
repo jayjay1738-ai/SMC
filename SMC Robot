@@ -1,0 +1,117 @@
+import MetaTrader5 as mt5
+import time
+
+# Initialize MT5
+if not mt5.initialize():
+    print("initialize() failed")
+    mt5.shutdown()
+
+# Set your trading parameters
+symbol = "Volatility 75 Index" # Replace with your synthetic index
+lot_size = 1.0
+take_profit = 50 # points
+stop_loss = 50 # points
+
+def get_signal():
+    # Here you can implement your SMC logic
+    # For example, we could use a simple moving average crossover or a directional movement index
+    # This is where you would add the logic to analyze price movement and give a buy/sell signal.
+    
+    # For simplicity, we'll use a placeholder return value.
+    return "buy"  # or "sell"
+
+def trade(signal):
+    price = mt5.symbol_info_tick(symbol).ask if signal == "buy" else mt5.symbol_info_tick(symbol).bid
+    deviation = 10
+    
+    # Create order request
+    request = {
+        "action": mt5.TRADE_ACTION_DEAL,
+        "symbol": symbol,
+        "volume": lot_size,
+        "type": mt5.ORDER_BUY if signal == "buy" else mt5.ORDER_SELL,
+        "price": price,
+        "sl": price - stop_loss if signal == "buy" else price + stop_loss,
+        "tp": price + take_profit if signal == "buy" else price - take_profit,
+        "deviation": deviation,
+        "magic": 234000,  # Unique identifier for the order
+        "comment": "SMC Trading Robot",
+        "type_filling": mt5.ORDER_FILLING_IOC,
+    }
+    
+    # Send order
+    result = mt5.order_send(request)
+    
+    if result.retcode != mt5.TRADE_RETCODE_DONE:
+        print(f"Order failed: {result.retcode}")
+    else:
+        print(f"Trade {result.type} successful!")
+
+try:
+    while True:
+        signal = get_signal()
+        trade(signal)
+        time.sleep(60)  # Wait for a minute before the next signal
+except KeyboardInterrupt:
+    print(" trading stopped")
+
+# Shutdown MT5
+mt5.shutdown()import MetaTrader5 as mt5
+import time
+
+# Initialize MT5
+if not mt5.initialize():
+    print("initialize() failed")
+    mt5.shutdown()
+
+# Set your trading parameters
+symbol = "Volatility 75 Index" # Replace with your synthetic index
+lot_size = 1.0
+take_profit = 50 # points
+stop_loss = 50 # points
+
+def get_signal():
+    # Here you can implement your SMC logic
+    # For example, we could use a simple moving average crossover or a directional movement index
+    # This is where you would add the logic to analyze price movement and give a buy/sell signal.
+    
+    # For simplicity, we'll use a placeholder return value.
+    return "buy"  # or "sell"
+
+def trade(signal):
+    price = mt5.symbol_info_tick(symbol).ask if signal == "buy" else mt5.symbol_info_tick(symbol).bid
+    deviation = 10
+    
+    # Create order request
+    request = {
+        "action": mt5.TRADE_ACTION_DEAL,
+        "symbol": symbol,
+        "volume": lot_size,
+        "type": mt5.ORDER_BUY if signal == "buy" else mt5.ORDER_SELL,
+        "price": price,
+        "sl": price - stop_loss if signal == "buy" else price + stop_loss,
+        "tp": price + take_profit if signal == "buy" else price - take_profit,
+        "deviation": deviation,
+        "magic": 234000,  # Unique identifier for the order
+        "comment": "SMC Trading Robot",
+        "type_filling": mt5.ORDER_FILLING_IOC,
+    }
+    
+    # Send order
+    result = mt5.order_send(request)
+    
+    if result.retcode != mt5.TRADE_RETCODE_DONE:
+        print(f"Order failed: {result.retcode}")
+    else:
+        print(f"Trade {result.type} successful!")
+
+try:
+    while True:
+        signal = get_signal()
+        trade(signal)
+        time.sleep(60)  # Wait for a minute before the next signal
+except KeyboardInterrupt:
+    print(" trading stopped")
+
+# Shutdown MT5
+mt5.shutdown()
